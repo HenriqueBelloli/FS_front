@@ -6,6 +6,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import merge from 'deepmerge';
 
 import Home from './src/pages/Home';
+import Login from './src/pages/Login';
 import Transactions from './src/pages/Transactions';
 import Add from './src/pages/Add';
 import Settings from './src/pages/Settings';
@@ -18,7 +19,7 @@ const CombinedDarkTheme = merge(PaperDarkTheme, NavigationDarkTheme);
 
 export default function App() {
   const [isThemeDark, setIsThemeDark] = React.useState(true);
-  let theme = isThemeDark ? CombinedDarkTheme : CombinedDefaultTheme;
+  let theme = !isThemeDark ? CombinedDarkTheme : CombinedDefaultTheme;
 
   const preferences = React.useMemo(
     () => ({
@@ -32,7 +33,7 @@ export default function App() {
       <PaperProvider theme={theme}>
         <NavigationContainer theme={theme}>
           <Tab.Navigator
-            initialRouteName="Home"
+            initialRouteName="Login"
             screenOptions={({ route }) => ({
               tabBarIcon: ({ focused, color, size }) => {
                 let iconName;
@@ -61,6 +62,7 @@ export default function App() {
                 padding: 0,
               },
             })}>
+            <Tab.Screen name="Login" component={Login} options={{ headerShown: false, title: 'Login'}} />
             <Tab.Screen name="Home" component={Home} options={{ headerShown: false, title: 'Principal'}} />
             <Tab.Screen name="Transactions" component={Transactions} options={{ headerShown: false, title: 'Transações' }} />
             <Tab.Screen name="Add" component={Add} options={{ headerShown: false, title: 'Adicionar' }} />
