@@ -2,7 +2,7 @@ import React, { createRef, useState, useEffect } from 'react';
 import { SafeAreaView, Text, TouchableOpacity } from 'react-native';
 import Input from '../../components/Input';
 
-const Login = () => {
+const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
 
@@ -23,6 +23,7 @@ const Login = () => {
       passInput.current.focusOnError();
       return;
     }
+    navigation.navigate('App')
   }
   return (
     <SafeAreaView style={{ flex: 1, justifyContent: 'center' }}>
