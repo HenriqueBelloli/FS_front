@@ -20,7 +20,7 @@ export default function Header({ name }) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: ThemeColors.fundoContainer,
+    backgroundColor: ThemeColors.cardBackground,
     paddingTop: statusBarHeight,
     flexDirection: 'row',
     paddingStart: 16,

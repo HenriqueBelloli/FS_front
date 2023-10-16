@@ -1,6 +1,7 @@
 import React, { useState, forwardRef, useImperativeHandle, createRef } from 'react';
 import { StyleSheet, TextInput, View, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { ThemeColors } from '../../standards';
 
 const Input = forwardRef((props, ref) => {
   const [sec, setSec] = useState(props.secureTextEntry);
@@ -20,17 +21,17 @@ const Input = forwardRef((props, ref) => {
   return (
     <View style={styles.container}>
       <TextInput
-        style={[styles.input, { borderColor: error ? '#e91e63' : '#E4E7EB' }]}
+        style={[styles.input, { borderColor: error ? ThemeColors.vermelhoErro : ThemeColors.borda }]}
         ref={inputref}
         underlineColorAndroid="transparent"
-        placeholderTextColor={'#7B8794'}
+        placeholderTextColor={ThemeColors.icone}
         {...props}
         secureTextEntry={sec}
       />
       <Ionicons
         name={props.iconName}
         size={26}
-        color={error ? '#e91e63' : '#444'}
+        color={error ? ThemeColors.vermelhoErro : ThemeColors.icone}
         style={styles.icon}
       />
       {props.secureTextEntry && (
@@ -38,7 +39,7 @@ const Input = forwardRef((props, ref) => {
           <Ionicons
             name={sec ? 'eye' : 'eye-off'}
             size={26}
-            color={'#7B8794'}
+            color={ThemeColors.icone}
             style={styles.iconSecret}
           />
         </TouchableOpacity>

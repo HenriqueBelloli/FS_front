@@ -44,7 +44,7 @@ export default function Balance({ saldo, gastos }) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: ThemeColors.fundoContainer,
+    backgroundColor: ThemeColors.cardBackground,
     paddingStart: 18,
     paddingEnd: 18,
     borderRadius: 4,

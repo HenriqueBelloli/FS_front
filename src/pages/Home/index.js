@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, FlatList } from 'react-native';
 import Header from '../../components/Header';
 import Balance from '../../components/Balance';
+import { ThemeColors } from '../../standards';
 
 export default function Home() {
   return (
@@ -15,7 +16,7 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //backgroundColor: '#1F1F1F',
+    backgroundColor: ThemeColors.screenBackground,
   },
   title: {
     fontSize: 18,

@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
   },
   containerContent: {
     flex: 1,
-    backgroundColor: ThemeColors.fundoContainer,
+    backgroundColor: ThemeColors.cardBackground,
     borderTopStartRadius: 25,
     borderTopEndRadius: 25,
   },

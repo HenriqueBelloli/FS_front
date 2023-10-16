@@ -1,6 +1,9 @@
 import React, { createRef, useState, useEffect } from 'react';
-import { SafeAreaView, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native';
 import Input from '../../components/Input';
+import Button from '../../components/Button';
+import { ThemeColors } from '../../standards';
 
 const Login = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -23,10 +26,10 @@ const Login = ({ navigation }) => {
       passInput.current.focusOnError();
       return;
     }
-    navigation.navigate('App')
+    navigation.navigate('App');
   }
   return (
-    <SafeAreaView style={{ flex: 1, justifyContent: 'center' }}>
+    <SafeAreaView style={styles.container}>
       <Input
         ref={emailInput}
         value={email}
@@ -48,11 +51,17 @@ const Login = ({ navigation }) => {
         keyboardType="default"
         secureTextEntry
       />
-      <TouchableOpacity onPress={logar}>
-        <Text>Entrar</Text>
-      </TouchableOpacity>
+      <Button label="Entrar" onPress={logar} />
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: ThemeColors.cardBackground,
+    flex: 1,
+    justifyContent: 'center',
+  },
+});
 
 export default Login;
