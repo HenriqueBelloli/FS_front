@@ -20,6 +20,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     justifyContent: 'center',
     alignItems: 'center',
+    flexDirection: 'row',
+    width: '90%'
   },
   text:{
     color: ThemeColors.textColor,
