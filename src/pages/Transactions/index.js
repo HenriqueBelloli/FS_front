@@ -54,6 +54,8 @@ export default function Transactions() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: ThemeColors.screenBackground,
+
   },
   containerHeader: {
     marginTop: statusBarHeight,

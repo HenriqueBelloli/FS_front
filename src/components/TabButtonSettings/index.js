@@ -1,72 +1,51 @@
 import React from 'react';
 import { StyleSheet, Text, View, Animated, TouchableWithoutFeedback } from 'react-native';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, Entypo } from '@expo/vector-icons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { ThemeColors } from '../../standards';
 
-export default class TabButtonAdd extends React.Component {
+export default class TabButtonSettings extends React.Component {
   animation = new Animated.Value(0);
   toggleMenu = () => {
     const toValue = this.open ? 0 : 1;
     Animated.spring(this.animation, {
       toValue,
       friction: 5,
-      useNativeDriver: true
+      useNativeDriver: true,
     }).start();
 
     this.open = !this.open;
   };
 
-  abrirTela = () =>{
+  abrirTela = () => {
     this.props.navigation.navigate('Add');
-  }
+  };
 
   render() {
     const incomeStyle = {
       transform: [
-        {scale: this.animation},
+        { scale: this.animation },
         {
           translateY: this.animation.interpolate({
-            inputRange: [0,1],
-            outputRange: [0,-70]
-          })
-        },
-        {
-          translateX: this.animation.interpolate({
-            inputRange: [0,1],
-            outputRange: [0,-50]
-          })
-        }
-      ],
-    };
-    
-    const expenseStyle = {
-      transform: [
-        {scale: this.animation},
-        {
-          translateY: this.animation.interpolate({
-            inputRange: [0,1],
-            outputRange: [0,-70]
-          })
-        },
-        {
-          translateX: this.animation.interpolate({
-            inputRange: [0,1],
-            outputRange: [0,50]
-          })
+            inputRange: [0, 1],
+            outputRange: [0, -80],
+          }),
         }
       ],
     };
 
-    const rotation = {
+    const expenseStyle = {
       transform: [
+        { scale: this.animation },
         {
-          rotate: this.animation.interpolate({
+          translateY: this.animation.interpolate({
             inputRange: [0, 1],
-            outputRange: ['0deg', '45deg'],
+            outputRange: [0, -150],
           }),
-        },
+        }
       ],
     };
+
     return (
       <View style={[styles.container, this.props.style]}>
         <TouchableWithoutFeedback onPress={this.abrirTela}>
@@ -82,8 +61,12 @@ export default class TabButtonAdd extends React.Component {
         </TouchableWithoutFeedback>
 
         <TouchableWithoutFeedback onPress={this.toggleMenu}>
-          <Animated.View style={[styles.button, styles.menu, rotation]}>
-            <AntDesign name="plus" size={24} color="#FFF" />
+          <Animated.View style={[styles.menu]}>
+            <Ionicons
+              name={this.props.focused ? 'ios-settings' : 'ios-settings-outline'}
+              size={24}
+              color={this.props.color}
+            />
           </Animated.View>
         </TouchableWithoutFeedback>
       </View>
@@ -109,7 +92,12 @@ const styles = StyleSheet.create({
     shadowOffset: { height: 10 },
   },
   menu: {
-    backgroundColor: ThemeColors.buttonPrimaryColor,
+   // backgroundColor: ThemeColors.buttonPrimaryColor,
+    position: 'absolute',
+    width: 60,
+    height: 38,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   secondary: {
     width: 48,

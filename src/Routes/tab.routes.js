@@ -2,6 +2,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { ThemeColors } from '../standards';
 import TabButtonAdd from '../components/TabButtonAdd';
+import TabButtonSettings from '../components/TabButtonSettings';
 
 import Home from '../pages/Home';
 import Transactions from '../pages/Transactions';
@@ -11,7 +12,7 @@ import Settings from '../pages/Settings';
 
 const Tab = createBottomTabNavigator();
 
-export default function TabRoutes() {
+export default function TabRoutes({ navigation }) {
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -30,6 +31,7 @@ export default function TabRoutes() {
           fontSize: 12,
           margin: 0,
           padding: 0,
+          //display: "none" 
         },
       })}>
       <Tab.Screen
@@ -60,7 +62,7 @@ export default function TabRoutes() {
         options={{
           headerShown: false,
           title: '',
-          tabBarIcon: ({ size }) => <TabButtonAdd size={size} />,
+          tabBarIcon: () => <TabButtonAdd style={{ bottom: 60 }} navigation={navigation} />,
         }}
       />
       <Tab.Screen
@@ -80,16 +82,19 @@ export default function TabRoutes() {
       />
       <Tab.Screen
         name="Settings"
-        component={Settings}
+        component={TabButtonSettings}
         options={{
           headerShown: false,
           title: 'Definições',
           tabBarIcon: ({ focused, color, size }) => (
-            <Ionicons
+           /* <Ionicons
               name={focused ? 'ios-settings' : 'ios-settings-outline'}
               size={size}
               color={color}
-            />
+            />*/
+
+             <TabButtonSettings style={{ bottom: 37 }} navigation={navigation} focused={focused} color={color} size={size}/>
+
           ),
         }}
       />
