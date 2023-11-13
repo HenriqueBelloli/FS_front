@@ -1,9 +1,12 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { ThemeColors } from '../standards';
+import TabButtonAdd from '../components/TabButtonAdd';
 
 import Home from '../pages/Home';
 import Transactions from '../pages/Transactions';
 import Add from '../pages/Add';
+import News from '../pages/News';
 import Settings from '../pages/Settings';
 
 const Tab = createBottomTabNavigator();
@@ -12,25 +15,14 @@ export default function TabRoutes() {
   return (
     <Tab.Navigator
       initialRouteName="Home"
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
-
-          if (route.name === 'Home') {
-            iconName = focused ? 'ios-home' : 'ios-home-outline';
-          } else if (route.name === 'Transactions') {
-            iconName = focused ? 'ios-list' : 'ios-list-outline';
-          } else if (route.name === 'Add') {
-            iconName = focused ? 'ios-add-circle' : 'ios-add-circle-outline';
-          } else if (route.name === 'Settings') {
-            iconName = focused ? 'ios-settings' : 'ios-settings-outline';
-          }
-
-          return <Ionicons name={iconName} size={size} color={color} />;
-        },
+      screenOptions={() => ({
         tabBarStyle: [
           {
-            height: 50,
+            height: 60,
+            backgroundColor: ThemeColors.screenBackground,
+            borderTopColor: 'transparent',
+            paddingBottom: 5,
+            paddingTop: 5,
           },
           null,
         ],
@@ -43,18 +35,63 @@ export default function TabRoutes() {
       <Tab.Screen
         name="Home"
         component={Home}
-        options={{ headerShown: false, title: 'Principal' }}
+        options={{
+          headerShown: false,
+          title: 'Principal',
+          tabBarIcon: ({ focused, color, size }) => (
+            <Ionicons name={focused ? 'ios-home' : 'ios-home-outline'} size={size} color={color} />
+          ),
+        }}
       />
       <Tab.Screen
         name="Transactions"
         component={Transactions}
-        options={{ headerShown: false, title: 'Transações' }}
+        options={{
+          headerShown: false,
+          title: 'Transações',
+          tabBarIcon: ({ focused, color, size }) => (
+            <Ionicons name={focused ? 'ios-list' : 'ios-list-outline'} size={size} color={color} />
+          ),
+        }}
       />
-      <Tab.Screen name="Add" component={Add} options={{ headerShown: false, title: 'Adicionar' }} />
+      <Tab.Screen
+        name="Add"
+        component={Add}
+        options={{
+          headerShown: false,
+          title: '',
+          tabBarIcon: ({ size }) => <TabButtonAdd size={size} />,
+        }}
+      />
+      <Tab.Screen
+        name="News"
+        component={News}
+        options={{
+          headerShown: false,
+          title: 'Noticias',
+          tabBarIcon: ({ focused, color, size }) => (
+            <Ionicons
+              name={focused ? 'ios-newspaper' : 'ios-newspaper-outline'}
+              size={size}
+              color={color}
+            />
+          ),
+        }}
+      />
       <Tab.Screen
         name="Settings"
         component={Settings}
-        options={{ headerShown: false, title: 'Definições' }}
+        options={{
+          headerShown: false,
+          title: 'Definições',
+          tabBarIcon: ({ focused, color, size }) => (
+            <Ionicons
+              name={focused ? 'ios-settings' : 'ios-settings-outline'}
+              size={size}
+              color={color}
+            />
+          ),
+        }}
       />
     </Tab.Navigator>
   );
