@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Text, View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 
-export default function AddExpense() {
+export default function ExpenseAdd() {
   const [campo1, setCampo1] = useState('');
   const [campo2, setCampo2] = useState('');
   const [campo3, setCampo3] = useState('');

@@ -18,11 +18,11 @@ export default class TabButtonAdd extends React.Component {
  
   adicionarReceita = () =>{
     this.toggleMenu
-    this.props.navigation.navigate('AddIncome');
+    this.props.navigation.navigate('IncomeAdd');
   }
   adicionarDespesa = () =>{
     this.toggleMenu
-    this.props.navigation.navigate('AddExpense');
+    this.props.navigation.navigate('ExpenseAdd');
   }
   render() {
     const incomeStyle = {

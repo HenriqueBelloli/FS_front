@@ -18,7 +18,7 @@ export default class TabButtonSettings extends React.Component {
 
   acessarCategorias = () =>{
     this.toggleMenu
-    this.props.navigation.navigate('AccountAdd');
+    this.props.navigation.navigate('CategoryList');
   }
   acessarContas = () =>{
     this.toggleMenu

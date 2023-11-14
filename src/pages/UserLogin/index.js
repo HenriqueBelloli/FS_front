@@ -12,7 +12,7 @@ import Input from '../../components/Input';
 import Button from '../../components/Button';
 import { ThemeColors } from '../../standards';
 
-const Login = ({ navigation }) => {
+const UserLogin = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
 
@@ -33,11 +33,11 @@ const Login = ({ navigation }) => {
       passInput.current.focusOnError();
       return;
     }
-    navigation.navigate('App');
+    navigation.navigate('AppMain');
   }
 
   function cadastrar() {
-    navigation.navigate('Cadastro');
+    navigation.navigate('UserRegister');
   }
 
   return (
@@ -116,4 +116,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Login;
+export default UserLogin;

@@ -11,7 +11,7 @@ import Input from '../../components/Input';
 import Button from '../../components/Button';
 import { ThemeColors } from '../../standards';
 
-const Login = ({ navigation }) => {
+const UserRegister = ({ navigation }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
@@ -147,4 +147,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Login;
+export default UserRegister;
