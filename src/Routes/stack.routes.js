@@ -5,6 +5,7 @@ import Cadastro from '../pages/Cadastro';
 import AddIncome from '../pages/AddIncome';
 import AddExpense from '../pages/AddExpense';
 import AccountList from '../pages/AccountList';
+import AccountAdd from '../pages/AccountAdd';
 
 const Stack = createStackNavigator();
 
@@ -16,8 +17,9 @@ export default function StackRoutes() {
 
       <Stack.Screen name="AddIncome" component={AddIncome} options={{ headerShown: false }} />
       <Stack.Screen name="AddExpense" component={AddExpense} options={{ headerShown: false }} />
-      <Stack.Screen name="AccountList" component={AccountList} options={{ headerShown: false }} />
 
+      <Stack.Screen name="AccountList" component={AccountList} options={{ headerShown: false }} />
+      <Stack.Screen name="AccountAdd" component={AccountAdd} options={{ headerShown: false }} />
 
       <Stack.Screen name="App" component={TabRoutes} options={{ headerShown: false }} />
     </Stack.Navigator>

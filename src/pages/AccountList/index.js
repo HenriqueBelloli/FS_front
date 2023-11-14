@@ -1,13 +1,16 @@
 import React from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 
-const AccountList = () => {
+const AccountList = ({ navigation }) => {
   const bankAccountsData = [
     { id: '1', bankName: 'Banco do Brasil', balance: 1504.3 },
     { id: '2', bankName: 'Nubank', balance: 2050.9 },
     { id: '3', bankName: 'Banco Central', balance: 1800 },
-   
   ];
+
+  adicionarConta = () => {
+    navigation.navigate('AccountAdd');
+  };
 
   const renderItem = ({ item }) => (
     <View style={styles.itemContainer}>
@@ -19,12 +22,8 @@ const AccountList = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.headerText}>Contas</Text>
-      <FlatList
-        data={bankAccountsData}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-      />
-      <TouchableOpacity style={styles.addButton}>
+      <FlatList data={bankAccountsData} renderItem={renderItem} keyExtractor={(item) => item.id} />
+      <TouchableOpacity style={styles.addButton} onPress={adicionarConta}>
         <Text style={styles.addButtonText}>Nova Conta</Text>
       </TouchableOpacity>
     </View>
@@ -42,7 +41,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginVertical: 16,
-    color:'white',
+    color: 'white',
   },
   itemContainer: {
     flexDirection: 'row',

@@ -29,7 +29,7 @@ export default function TabRoutes({ navigation }) {
           fontSize: 12,
           margin: 0,
           padding: 0,
-          //display: "none" 
+          //display: "none"
         },
       })}>
       <Tab.Screen
@@ -85,14 +85,19 @@ export default function TabRoutes({ navigation }) {
           headerShown: false,
           title: 'Definições',
           tabBarIcon: ({ focused, color, size }) => (
-           /* <Ionicons
+            /* <Ionicons
               name={focused ? 'ios-settings' : 'ios-settings-outline'}
               size={size}
               color={color}
             />*/
 
-             <TabButtonSettings style={{ bottom: 37 }} navigation={navigation} focused={focused} color={color} size={size}/>
-
+            <TabButtonSettings
+              style={{ bottom: 37 }}
+              navigation={navigation}
+              focused={focused}
+              color={color}
+              size={size}
+            />
           ),
         }}
       />
