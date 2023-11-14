@@ -1,7 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, View, Animated, TouchableWithoutFeedback } from 'react-native';
-import { AntDesign, Entypo } from '@expo/vector-icons';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { StyleSheet, View, Animated, TouchableWithoutFeedback, Text } from 'react-native';
+import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { ThemeColors } from '../../standards';
 
 export default class TabButtonSettings extends React.Component {
@@ -17,46 +16,63 @@ export default class TabButtonSettings extends React.Component {
     this.open = !this.open;
   };
 
-  abrirTela = () => {
-    this.props.navigation.navigate('Add');
-  };
+  acessarCategorias = () =>{
+    this.toggleMenu
+    this.props.navigation.navigate('AddIncome');
+  }
+  acessarContas = () =>{
+    this.toggleMenu
+    this.props.navigation.navigate('AccountList');
+  }
 
   render() {
-    const incomeStyle = {
+    const contaStyle = {
       transform: [
         { scale: this.animation },
         {
           translateY: this.animation.interpolate({
             inputRange: [0, 1],
-            outputRange: [0, -80],
+            outputRange: [0, -50],
           }),
+        },
+        {
+          translateX: this.animation.interpolate({
+            inputRange: [0,1],
+            outputRange: [0,-15]
+          })
         }
       ],
     };
 
-    const expenseStyle = {
+    const categoriaStyle = {
       transform: [
         { scale: this.animation },
         {
           translateY: this.animation.interpolate({
             inputRange: [0, 1],
-            outputRange: [0, -150],
+            outputRange: [0, -100],
           }),
+        },
+        {
+          translateX: this.animation.interpolate({
+            inputRange: [0,1],
+            outputRange: [0,-15]
+          })
         }
       ],
     };
 
     return (
       <View style={[styles.container, this.props.style]}>
-        <TouchableWithoutFeedback onPress={this.abrirTela}>
-          <Animated.View style={[styles.button, styles.secondary, incomeStyle]}>
-            <AntDesign name="arrowup" size={20} color={ThemeColors.verdeReceitas} />
+        <TouchableWithoutFeedback onPress={this.acessarContas}>
+          <Animated.View style={[styles.button, styles.secondary, contaStyle]}>
+            <Text style={styles.buttonText}>Contas</Text>
           </Animated.View>
         </TouchableWithoutFeedback>
 
-        <TouchableWithoutFeedback onPress={this.abrirTela}>
-          <Animated.View style={[styles.button, styles.secondary, expenseStyle]}>
-            <AntDesign name="arrowdown" size={20} color={ThemeColors.vermelhoDespesas} />
+        <TouchableWithoutFeedback onPress={this.acessarCategorias}>
+          <Animated.View style={[styles.button, styles.secondary, categoriaStyle]}>
+            <Text style={styles.buttonText}>Categorias</Text>
           </Animated.View>
         </TouchableWithoutFeedback>
 
@@ -81,18 +97,17 @@ const styles = StyleSheet.create({
   },
   button: {
     position: 'absolute',
-    width: 60,
-    height: 60,
-    borderRadius: 60 / 2,
+    width: 100, 
+    height: 38, 
+    borderRadius: 5,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowRadius: 10,
-    shadowColor: '#F02A4B',
-    shadowOpacity: 0.3,
-    shadowOffset: { height: 10 },
+    backgroundColor: ThemeColors.cardBackground,
+  },
+  buttonText: {
+    color: 'white',
   },
   menu: {
-   // backgroundColor: ThemeColors.buttonPrimaryColor,
     position: 'absolute',
     width: 60,
     height: 38,
@@ -100,9 +115,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   secondary: {
-    width: 48,
-    height: 48,
-    borderRadius: 48 / 2,
     backgroundColor: ThemeColors.cardBackground,
   },
 });

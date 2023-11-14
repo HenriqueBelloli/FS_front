@@ -15,11 +15,15 @@ export default class TabButtonAdd extends React.Component {
 
     this.open = !this.open;
   };
-
-  abrirTela = () =>{
-    this.props.navigation.navigate('Add');
+ 
+  adicionarReceita = () =>{
+    this.toggleMenu
+    this.props.navigation.navigate('AddIncome');
   }
-
+  adicionarDespesa = () =>{
+    this.toggleMenu
+    this.props.navigation.navigate('AddExpense');
+  }
   render() {
     const incomeStyle = {
       transform: [
@@ -69,13 +73,13 @@ export default class TabButtonAdd extends React.Component {
     };
     return (
       <View style={[styles.container, this.props.style]}>
-        <TouchableWithoutFeedback onPress={this.abrirTela}>
+        <TouchableWithoutFeedback onPress={this.adicionarReceita}>
           <Animated.View style={[styles.button, styles.secondary, incomeStyle]}>
             <AntDesign name="arrowup" size={20} color={ThemeColors.verdeReceitas} />
           </Animated.View>
         </TouchableWithoutFeedback>
 
-        <TouchableWithoutFeedback onPress={this.abrirTela}>
+        <TouchableWithoutFeedback onPress={this.adicionarDespesa}>
           <Animated.View style={[styles.button, styles.secondary, expenseStyle]}>
             <AntDesign name="arrowdown" size={20} color={ThemeColors.vermelhoDespesas} />
           </Animated.View>

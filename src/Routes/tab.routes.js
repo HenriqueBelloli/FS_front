@@ -3,14 +3,12 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { ThemeColors } from '../standards';
 import TabButtonAdd from '../components/TabButtonAdd';
 import TabButtonSettings from '../components/TabButtonSettings';
-
 import Home from '../pages/Home';
 import Transactions from '../pages/Transactions';
-import Add from '../pages/Add';
 import News from '../pages/News';
-import Settings from '../pages/Settings';
 
 const Tab = createBottomTabNavigator();
+const AcaoEspecialComponent = () => null;
 
 export default function TabRoutes({ navigation }) {
   return (
@@ -58,7 +56,7 @@ export default function TabRoutes({ navigation }) {
       />
       <Tab.Screen
         name="Add"
-        component={Add}
+        component={AcaoEspecialComponent}
         options={{
           headerShown: false,
           title: '',
@@ -82,7 +80,7 @@ export default function TabRoutes({ navigation }) {
       />
       <Tab.Screen
         name="Settings"
-        component={TabButtonSettings}
+        component={AcaoEspecialComponent}
         options={{
           headerShown: false,
           title: 'Definições',

@@ -1,6 +1,5 @@
 import React, { createRef, useState, useEffect } from 'react';
 import {
-  Image,
   Text,
   View,
   TouchableOpacity,
@@ -13,16 +12,28 @@ import Button from '../../components/Button';
 import { ThemeColors } from '../../standards';
 
 const Login = ({ navigation }) => {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
+  const [confirmPass, setConfirmPass] = useState('');
 
+  const nameInput = createRef();
   const emailInput = createRef();
   const passInput = createRef();
+  const confirmPassInput = createRef();
 
+  useEffect(() => nameInput.current.resetError, [name]);
   useEffect(() => emailInput.current.resetError, [email]);
   useEffect(() => passInput.current.resetError, [pass]);
+  useEffect(() => confirmPassInput.current.resetError, [confirmPass]);
 
-  function logar() {
+  function cadastrar() {
+    if (name == '') {
+      alert('Nome inválido');
+      nameInput.current.focusOnError();
+      return;
+    }
+
     if (email === '') {
       alert('e-mail inválido');
       emailInput.current.focusOnError();
@@ -33,19 +44,37 @@ const Login = ({ navigation }) => {
       passInput.current.focusOnError();
       return;
     }
+    if (confirmPass === '') {
+      alert('Confirme a senha');
+      confirmPassInput.current.focusOnError();
+      return;
+    }
+    if (pass !== confirmPass) {
+      alert('Senhas informadas não conferem');
+      confirmPassInput.current.focusOnError();
+      return;
+    }
     navigation.navigate('App');
-  }
-
-  function cadastrar() {
-    navigation.navigate('Cadastro');
   }
 
   return (
     <SafeAreaView style={styles.background}>
-      <View style={styles.containerLogo}>
-        <Image style={styles.logo} source={require('../../assets/logo.png')} />
+      <View style={styles.containerTitle}>
+        <Text style={styles.title}>Cadastre-se</Text>
+        <Text style={styles.subTitle}>Cadastre-se utilizando seu e-mail e senha.</Text>
       </View>
       <View style={styles.container}>
+        <Input
+          ref={nameInput}
+          value={name}
+          onChangeText={setName}
+          iconName={'person'}
+          placeholder="nome"
+          autoCapitalize="none"
+          autoCorrect={false}
+          keyboardType="default"
+        />
+
         <Input
           ref={emailInput}
           value={email}
@@ -67,15 +96,18 @@ const Login = ({ navigation }) => {
           keyboardType="default"
           secureTextEntry
         />
-        <Button label="Entrar" onPress={logar} />
-        <View style={styles.register}>
-          <TouchableWithoutFeedback>
-            <Text style={styles.registerText}>Ainda não possui conta?</Text>
-          </TouchableWithoutFeedback>
-          <TouchableOpacity onPress={cadastrar}>
-            <Text style={styles.registerTextHighlight}>Cadastre-se</Text>
-          </TouchableOpacity>
-        </View>
+        <Input
+          ref={confirmPassInput}
+          value={confirmPass}
+          onChangeText={setConfirmPass}
+          iconName={'lock-closed'}
+          placeholder="confirme a senha"
+          autoCapitalize="none"
+          autoCorrect={false}
+          keyboardType="default"
+          secureTextEntry
+        />
+        <Button label="Cadastrar" onPress={cadastrar} />
       </View>
     </SafeAreaView>
   );
@@ -88,31 +120,30 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  containerLogo: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  logo: {
-    width: 180,
-    height: 180,
-  },
-  container: {
+  containerTitle: {
     flex: 1,
     alignItems: 'center',
+    justifyContent:'center',
     width: '95%',
     paddingBottom: 50,
   },
-  register: {
+  title: {
     marginTop: 30,
-    flexDirection: 'row',
-  },
-  registerText: {
+    textAlign: 'center',
+    fontSize: 30,
     color: ThemeColors.textColor,
-    paddingRight: 5,
   },
-  registerTextHighlight: {
-    color: ThemeColors.buttonPrimaryColor,
+  subTitle: {
+    marginTop: 20,
+    textAlign: 'center',
+    fontSize: 12,
+    color: ThemeColors.textColor,
+  },
+  container: {
+    flex: 3,
+    alignItems: 'center',
+    width: '95%',
+    paddingBottom: 50,
   },
 });
 
