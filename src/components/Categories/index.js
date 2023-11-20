@@ -6,9 +6,11 @@ import { ThemeColors } from '../../standards';
 export default function Categories({ data }) {
   return (
     <TouchableOpacity style={styles.container}>
+      <Text style={styles.date}>{data.date}</Text>
+
       <View style={styles.content}>
-        <View>
-          <Text style={data.type === 1 ? styles.incomes : styles.expenses}>{data.label}</Text>
+        <View> 
+          <Text style={styles.label}>{data.descricao}</Text>
         </View>
 
         <View style={styles.buttonArea}>
@@ -33,31 +35,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginBottom: 24,
-    borderWidth: 3,
-    borderColor: 'white',
-    borderRadius: 10,
   },
   content: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 12,
+    marginTop: 2,
     marginBottom: 8,
-    padding: 5,
-    marginLeft: 10,
   },
-  date: {
+  label: {
+    fontWeight: 'bold',
+    fontSize: 16,
     color: ThemeColors.fonte,
-    fontWeight: 'bold',
-  },
-  incomes: {
-    fontWeight: 'bold',
-    fontSize: 18,
-    color: ThemeColors.verdeReceitas,
-  },
-  expenses: {
-    fontWeight: 'bold',
-    fontSize: 18,
-    color: ThemeColors.vermelhoDespesas,
   },
   buttonArea: {
     flexDirection: 'row',

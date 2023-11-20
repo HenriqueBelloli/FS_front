@@ -1,19 +1,36 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import {Picker} from '@react-native-picker/picker';
+import { Picker } from '@react-native-picker/picker';
+import ApiService from '../../services/apiService';
 
 const CategoryAdd = ({ navigation }) => {
-  const [category, setCategory] = useState("despesa");
-  const [description, setDescription] = useState('');
+  const [tipo, setTipo] = useState('2');
+  const [descricao, setDescricao] = useState('');
+  const apiService = new ApiService();
 
-  const handleCategory = () => {
-   
-    console.log('Categoria:', category);
-    console.log('Descricao:', description);
+  async function categoriaCadastrar() {
+    if (descricao === '') {
+      alert('Informe a descrição');
+      return;
+    }
 
-   
-    navigation.goBack();
-  };
+    const dados = {
+      descricao: descricao,
+      usuarioId: 1,
+      tipo: parseInt(tipo, 10),
+    };
+
+    await apiService
+      .request('POST', 'categorias', dados)
+      .then(() => {
+        alert('Categoria criada com sucesso!');
+        navigation.goBack();
+      })
+      .catch((error) => {
+        alert(error.message);
+        return;
+      });
+  }
 
   return (
     <View style={styles.container}>
@@ -22,29 +39,28 @@ const CategoryAdd = ({ navigation }) => {
       <View style={styles.fieldContainer}>
         <Text style={styles.label}>Categoria</Text>
         <View style={styles.selectArea}>
-        <Picker
-        style={styles.select1}
-        selectedValue={category}
-        onValueChange={(itemValue, itemIndex) => setCategory(itemValue)}
-      >
-        <Picker.Item label="Despesa" value="despesa" />
-        <Picker.Item label="Receita" value="receita" />
-      </Picker>
-      </View>
+          <Picker
+            style={styles.select1}
+            selectedValue={tipo}
+            onValueChange={(itemValue, itemIndex) => setTipo(itemValue)}>
+            <Picker.Item label="Despesa" value="2" />
+            <Picker.Item label="Receita" value="1" />
+          </Picker>
+        </View>
       </View>
 
       <View style={styles.fieldContainer}>
         <Text style={styles.label}>Descrição</Text>
         <TextInput
           style={styles.input}
-          placeholder="Exemplo: Boleto Bancário"
+          placeholder="Descrição"
           placeholderTextColor="white"
-          value={description}
-          onChangeText={text => setDescription(text)}
+          value={descricao}
+          onChangeText={(text) => setDescricao(text)}
         />
       </View>
 
-      <TouchableOpacity style={styles.addButton} onPress={handleCategory}>
+      <TouchableOpacity style={styles.addButton} onPress={categoriaCadastrar}>
         <Text style={styles.addButtonText}>Cadastrar</Text>
       </TouchableOpacity>
 
@@ -66,7 +82,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginVertical: 16,
-    color:'white'
+    color: 'white',
   },
   fieldContainer: {
     marginBottom: 16,
@@ -74,9 +90,9 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     marginBottom: 8,
-    color:'white'
+    color: 'white',
   },
-  select1:{
+  select1: {
     height: 40,
     paddingHorizontal: 8,
     color: 'white',

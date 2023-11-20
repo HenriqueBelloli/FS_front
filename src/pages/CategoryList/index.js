@@ -1,91 +1,83 @@
-import React, { useState } from 'react';
-import { StyleSheet, TouchableOpacity, Text, View, FlatList, StatusBar } from 'react-native';
-import { ThemeColors } from '../../standards';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, FlatList, StatusBar } from 'react-native';
 import Categories from '../../components/Categories';
+import FloatingButton from '../../components/FloatingButton';
+import SwitchSelector from 'react-native-switch-selector';
+import ApiService from '../../services/apiService';
+import { ThemeColors } from '../../standards';
 
 const statusBarHeight = StatusBar.currentHeight ? StatusBar.currentHeight + 22 : 64;
 
-const list0 = [
+const list = [
   {
     id: 1,
-    label: 'Serviços',
-    type: 0,
+    tipo: 1,
+    descricao: 'salário',
   },
   {
     id: 2,
-    label: 'Moradia',
-    type: 0,
+    tipo: 1,
+    descricao: 'salário',
   },
   {
     id: 3,
-    label: 'Alimentação',
-    type: 0,
-  },
-  {
-    id: 4,
-    label: 'Doação',
-    type: 0,
-  },
-  {
-    id: 5,
-    label: 'Mercado',
-    type: 0,
-  },
-];
-
-const list1 = [
-  {
-    id: 1,
-    label: 'Salário',
-    type: 1,
-  },
-  {
-    id: 2,
-    label: 'Aluguel',
-    type: 1,
-  },
-  {
-    id: 3,
-    label: 'Bolsa de Estudos',
-    type: 1,
-  },
-  {
-    id: 4,
-    label: 'Mesada',
-    type: 1,
+    tipo: 2,
+    descricao: 'salário',
   },
 ];
 
 export default function CategoryList({ navigation }) {
-  const [showList1, setShowList1] = useState(true);
+  const [selectedOption, setSelectedOption] = useState('receitas');
+  const [list, setList] = useState([]);
+  const apiService = new ApiService();
 
-  const toggleList = () => {
-    setShowList1(!showList1);
-  };
-  adicionarCategoria = () => {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await apiService.request('GET', 'categorias/usuarioCategorias', {
+          usuarioId: 1,
+          tipo: selectedOption === 'receitas' ? 1 : 2,
+        });
+
+        setList(response.data);
+      } catch (error) {
+        console.error('Erro ao carregar dados da API:', error);
+      }
+    };
+
+    fetchData();
+  }, [selectedOption]);
+
+  function adicionarCategoria() {
     navigation.navigate('CategoryAdd');
-  };
+  }
+
   return (
-    <View  style={styles.container}>
-
+    <View style={styles.container}>
       <View style={styles.containerHeader}>
-        <Text style={styles.title}>Categorias</Text>
+        <Text style={styles.title}> Categorias</Text>
       </View>
-    
-      <View style={styles.containerContent2}>
-      <TouchableOpacity style={[styles.button, styles.buttonChange]} onPress={toggleList}>
-          <Text style={styles.buttonText}>Trocar Categoria</Text>
-      </TouchableOpacity>
-      {showList1 ? (
-        <FlatList style={styles.list} data={list0} keyExtractor={(item) => String(item.id)} showsVerticalScrollIndicator={true} renderItem={({ item }) => <Categories data={item} />} />
-      ) : (
-        <FlatList style={styles.list} data={list1} keyExtractor={(item) => String(item.id)} showsVerticalScrollIndicator={true} renderItem={({ item }) => <Categories data={item} />} />
-      )}
-      <TouchableOpacity style={[styles.button2, styles.buttonChange2]}>
-          <Text style={styles.buttonText}>Nova Categoria</Text>
-      </TouchableOpacity>
-    </View>
 
+      <View style={styles.containerContent}>
+        <SwitchSelector
+          options={[
+            { label: 'Receitas', value: 'receitas', activeColor: ThemeColors.verdeReceitas },
+            { label: 'Despesas', value: 'despesas', activeColor: ThemeColors.vermelhoDespesas },
+          ]}
+          initial={0}
+          onPress={(value) => setSelectedOption(value)}
+          style={styles.switchSelector}
+        />
+
+        <FlatList
+          style={styles.list}
+          data={list}
+          keyExtractor={(item) => String(item.id)}
+          showsVerticalScrollIndicator={true}
+          renderItem={({ item }) => <Categories data={item} />}
+        />
+      </View>
+      <FloatingButton style={{ bottom: 70, right: 40 }} onPress={adicionarCategoria} />
     </View>
   );
 }
@@ -99,9 +91,9 @@ const styles = StyleSheet.create({
     marginTop: statusBarHeight,
     borderRadius: 30,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
-  containerContent2: {
+  containerContent: {
     flex: 1,
     backgroundColor: ThemeColors.cardBackground,
     borderTopStartRadius: 25,
@@ -110,42 +102,16 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginHorizontal: 18,
-    margin:18,
+    margin: 18,
     color: ThemeColors.fonte,
   },
   list: {
     marginStart: 14,
     marginEnd: 14,
   },
-  button: {
-    borderRadius: 25,
-    marginHorizontal: 10,
-    marginVertical: 20,
-    width: 190,
-    padding: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  button2: {
-    position: 'absolute',
-    borderRadius: 25,
-    marginLeft: 205,
-    marginVertical: 20,
-    width: 190,
-    padding: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buttonChange: {
-    backgroundColor: '#3580FF2E',
-  },
-  buttonChange2: {
-    backgroundColor: '#007BFF',
-  },
-  buttonText: {
-    color: ThemeColors.fonte,
-    fontWeight: 'bold',
-    fontSize: 18,
+  switchSelector: {
+    marginTop: 30,
+    marginBottom: 15,
+    marginHorizontal: 30,
   },
 });
