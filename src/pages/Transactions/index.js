@@ -1,51 +1,87 @@
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, FlatList, StatusBar } from 'react-native';
+import SwitchSelector from 'react-native-switch-selector';
 import Movements from '../../components/Movements';
+import ApiService from '../../services/apiService';
 import { ThemeColors } from '../../standards';
+import Select from '../../components/MonthYearPicker';
 
 const statusBarHeight = StatusBar.currentHeight ? StatusBar.currentHeight + 22 : 64;
 
-const list = [
-  {
-    id: 1,
-    label: 'Boleto conta luz',
-    value: '300,90',
-    date: '17/09/2023',
-    type: 0,
-    category: 'Moradia',
-    account: 'Conta Corrente'
-  },
-  {
-    id: 2,
-    label: 'Mesada',
-    value: '500,00',
-    date: '15/09/2023',
-    type: 1,
-    category: 'Salário',
-    account: 'Conta Corrente'
-  },
-  {
-    id: 3,
-    label: 'Pastel',
-    value: '10,00',
-    date: '20/09/2023',
-    type: 0,
-    category: 'Alimentação',
-    account: 'Carteira'
-  },
-];
-
 export default function Transactions() {
-  return (
-    <View  style={styles.container}>
+  const [selectedOption, setSelectedOption] = useState('receitas');
+  const [list, setList] = useState([]);
+  const apiService = new ApiService();
 
+  const months = [
+    'Janeiro',
+    'Fevereiro',
+    'Março',
+    'Abril',
+    'Maio',
+    'Junho',
+    'Julho',
+    'Agosto',
+    'Setembro',
+    'Outubro',
+    'Novembro',
+    'Dezembro',
+  ];
+  const [selectedMonth, setSelectedMonth] = useState(11);
+  const [selectedYear, setSelectedYear] = useState(2023);
+
+  const handleSelectChange = (value) => {
+    setSelectedMonth(value);
+  };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+
+        let firstDay = new Date(selectedYear, selectedMonth - 1, 1);
+        let lastDay = new Date(selectedYear, selectedMonth, 0);
+        firstDay.setDate(firstDay.getDate() + 1); // Tive que compensar a data pois Op.between estav reduzindo um dia sempre
+        lastDay.setDate(lastDay.getDate() + 1);
+
+        const response = await apiService.request('GET', 'movimentacoes/search', {
+          usuarioId: 1,
+          tipo: selectedOption === 'receitas' ? 1 : 2,
+          periodo_inicial: firstDay.toISOString(), // Convertendo para string no formato ISO
+          periodo_final: lastDay.toISOString(),
+
+        });
+
+        setList(response.data);
+      } catch (error) {
+        console.error('Erro ao carregar dados da API:', error);
+      }
+    };
+
+    fetchData();
+  }, [selectedOption, selectedMonth]);
+
+  return (
+    <View style={styles.container}>
       <View style={styles.containerHeader}>
-        <Text style={styles.title}> Setembro 2023</Text>
+        <SwitchSelector
+          options={[
+            { label: 'Receitas', value: 'receitas', activeColor: ThemeColors.verdeReceitas },
+            { label: 'Despesas', value: 'despesas', activeColor: ThemeColors.vermelhoDespesas },
+          ]}
+          initial={0}
+          onPress={(value) => setSelectedOption(value)}
+          style={styles.switchSelector}
+        />
+        <Select options={months} selectedValue={selectedMonth} onSelect={handleSelectChange} />
       </View>
 
       <View style={styles.containerContent}>
-        <Text style={styles.title}> Transações</Text>
-
-        <FlatList style={styles.list} data={list} keyExtractor={(item) => String(item.id)} showsVerticalScrollIndicator={true} renderItem={({ item }) => <Movements data={item} />} />
+        <FlatList
+          style={styles.list}
+          data={list}
+          keyExtractor={(item) => String(item.id)}
+          showsVerticalScrollIndicator={true}
+          renderItem={({ item }) => <Movements data={item} />}
+        />
       </View>
     </View>
   );
@@ -55,13 +91,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: ThemeColors.screenBackground,
-
   },
   containerHeader: {
     marginTop: statusBarHeight,
     borderRadius: 30,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   containerContent: {
     flex: 1,
@@ -78,5 +113,10 @@ const styles = StyleSheet.create({
   list: {
     marginStart: 14,
     marginEnd: 14,
+  },
+  switchSelector: {
+    marginTop: 15,
+    marginBottom: 30,
+    marginHorizontal: 30,
   },
 });

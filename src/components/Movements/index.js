@@ -4,20 +4,26 @@ import { AntDesign } from '@expo/vector-icons';
 import { ThemeColors } from '../../standards';
 
 export default function Movements({ data }) {
+  const formatter = new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  });
+
   return (
     <TouchableOpacity style={styles.container}>
-      <Text style={styles.date}>{data.date}</Text>
+      <Text style={styles.date}>{data.data}</Text>
 
       <View style={styles.content}>
-
         <View>
-          <Text style={styles.label}>{data.label}</Text>
+          <Text style={styles.label}>{data.descricao}</Text>
           <Text style={styles.category}>
-            {data.category} | {data.account}
+            {data.categoria.descricao} | {data.conta.descricao}
           </Text>
         </View>
 
-        <Text style={data.type === 1 ? styles.incomes : styles.expenses}>R$ {data.value}</Text>
+        <Text style={data.tipo === 1 ? styles.incomes : styles.expenses}>
+          {formatter.format(data.valor)}
+        </Text>
 
         <View style={styles.buttonArea}>
           <TouchableOpacity style={styles.actionButton}>
@@ -41,6 +47,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginBottom: 24,
+    marginTop: 10,
   },
   content: {
     flexDirection: 'row',
