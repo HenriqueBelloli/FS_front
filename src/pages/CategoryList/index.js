@@ -29,7 +29,7 @@ const list = [
 export default function CategoryList({ navigation }) {
   const [selectedOption, setSelectedOption] = useState('receitas');
   const [list, setList] = useState([]);
-  const apiService = new ApiService();
+  const apiService = new ApiService(); 
 
   useEffect(() => {
     const fetchData = async () => {

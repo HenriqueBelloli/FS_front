@@ -1,79 +1,86 @@
-import React from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, FlatList, StatusBar } from 'react-native';
+import Account from '../../Account';
+import FloatingButton from '../../components/FloatingButton';
+import ApiService from '../../services/apiService';
+import { ThemeColors } from '../../standards';
 
-const AccountList = ({ navigation }) => {
-  const bankAccountsData = [
-    { id: '1', bankName: 'Banco do Brasil', balance: 1504.3 },
-    { id: '2', bankName: 'Nubank', balance: 2050.9 },
-    { id: '3', bankName: 'Banco Central', balance: 1800 },
-  ];
+const statusBarHeight = StatusBar.currentHeight ? StatusBar.currentHeight + 22 : 64;
 
-  adicionarConta = () => {
+export default function CategoryList({ navigation }) {
+  const [list, setList] = useState([]);
+  const apiService = new ApiService();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await apiService.request('GET', 'contas/usuarioContas', {
+          usuarioId: 1,
+        });
+
+        setList(response.data);
+      } catch (error) {
+        console.error('Erro ao carregar dados da API:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  function adicionarConta() {
     navigation.navigate('AccountAdd');
-  };
-
-  const renderItem = ({ item }) => (
-    <View style={styles.itemContainer}>
-      <Text style={styles.bankName}>{item.bankName}</Text>
-      <Text style={styles.balance}>Saldo atual: ${item.balance}</Text>
-    </View>
-  );
+  }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>Contas</Text>
-      <FlatList data={bankAccountsData} renderItem={renderItem} keyExtractor={(item) => item.id} />
-      <TouchableOpacity style={styles.addButton} onPress={adicionarConta}>
-        <Text style={styles.addButtonText}>Nova Conta</Text>
-      </TouchableOpacity>
+      <View style={styles.containerHeader}>
+        <Text style={styles.title}>Contas</Text>
+      </View>
+
+      <View style={styles.containerContent}>
+        <FlatList
+          style={styles.list}
+          data={list}
+          keyExtractor={(item) => String(item.id)}
+          showsVerticalScrollIndicator={true}
+          renderItem={({ item }) => <Account data={item} />}
+        />
+      </View>
+      <FloatingButton style={{ bottom: 70, right: 40 }} onPress={adicionarConta} />
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#1F1F1F',
+    backgroundColor: ThemeColors.screenBackground,
   },
-  headerText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginVertical: 16,
-    color: 'white',
-  },
-  itemContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  containerHeader: {
+    marginTop: statusBarHeight,
+    borderRadius: 30,
+    justifyContent: 'center',
     alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
   },
-  bankName: {
+  containerContent: {
+    flex: 1,
+    backgroundColor: ThemeColors.cardBackground,
+    borderTopStartRadius: 25,
+    borderTopEndRadius: 25,
+  },
+  title: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: 'white',
+    margin: 18,
+    color: ThemeColors.fonte,
   },
-  balance: {
-    fontSize: 16,
-    color: '#007BFF',
+  list: {
+    marginStart: 14,
+    marginEnd: 14,
   },
-  addButton: {
-    position: 'absolute',
-    bottom: 16,
-    right: 16,
-    backgroundColor: '#007BFF',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-  },
-  addButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+  switchSelector: {
+    marginTop: 30,
+    marginBottom: 15,
+    marginHorizontal: 30,
   },
 });
-
-export default AccountList;
