@@ -27,6 +27,10 @@ class ApiService {
 
     try {
       const response = await fetch(url, options);
+
+      if (response.status === 204) {
+        return null; // Retorna nulo quando não há conteúdo (No Content)
+      }
       const result = await response.json();
 
       /* Testa se o código de retorno está dentro da faixa de sucesso (2xx). */
@@ -38,7 +42,6 @@ class ApiService {
     } catch (error) {
       throw new Error(error.message);
     }
-
   }
 }
 
