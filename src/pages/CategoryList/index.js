@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, Text, View, FlatList, StatusBar } from 'react-native';
 import Categories from '../../components/Categories';
 import FloatingButton from '../../components/FloatingButton';
@@ -8,48 +8,48 @@ import { ThemeColors } from '../../standards';
 
 const statusBarHeight = StatusBar.currentHeight ? StatusBar.currentHeight + 22 : 64;
 
-const list = [
-  {
-    id: 1,
-    tipo: 1,
-    descricao: 'salário',
-  },
-  {
-    id: 2,
-    tipo: 1,
-    descricao: 'salário',
-  },
-  {
-    id: 3,
-    tipo: 2,
-    descricao: 'salário',
-  },
-];
-
 export default function CategoryList({ navigation }) {
   const [selectedOption, setSelectedOption] = useState('receitas');
   const [list, setList] = useState([]);
-  const apiService = new ApiService(); 
+  const apiService = new ApiService();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await apiService.request('GET', 'categorias/usuarioCategorias', {
-          usuarioId: 1,
-          tipo: selectedOption === 'receitas' ? 1 : 2,
-        });
+  const fetchData = useCallback(async () => {
+    try {
+      const response = await apiService.request('GET', 'categorias/usuarioCategorias', {
+        usuarioId: 1,
+        tipo: selectedOption === 'receitas' ? 1 : 2,
+      });
 
-        setList(response.data);
-      } catch (error) {
-        console.error('Erro ao carregar dados da API:', error);
-      }
-    };
-
-    fetchData();
+      setList(response.data);
+    } catch (error) {
+      console.error('Erro ao carregar dados da API:', error);
+    }
   }, [selectedOption]);
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchData();
+    });
+
+    return unsubscribe;
+  }, [navigation, fetchData]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData, selectedOption]);
+
+  const deletarCategoria = async (categoryId) => {
+    try {
+      await apiService.request('DELETE', `categorias?id=${categoryId}`);
+
+      fetchData();
+    } catch (error) {
+      Alert.alert('Erro ao excluir a categoria:\n' + error.message);
+    }
+  };
+
   function adicionarCategoria() {
-    navigation.navigate('CategoryAdd');
+    navigation.navigate('CategoryAdd',{ tipo: selectedOption })
   }
 
   return (
@@ -74,7 +74,9 @@ export default function CategoryList({ navigation }) {
           data={list}
           keyExtractor={(item) => String(item.id)}
           showsVerticalScrollIndicator={true}
-          renderItem={({ item }) => <Categories data={item} />}
+          renderItem={({ item }) => (
+            <Categories data={item} navigation={navigation} onDelete={deletarCategoria} />
+          )}
         />
       </View>
       <FloatingButton style={{ bottom: 70, right: 40 }} onPress={adicionarCategoria} />

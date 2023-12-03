@@ -1,28 +1,52 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
 import React from 'react';
-import { AntDesign } from '@expo/vector-icons';
 import { ThemeColors } from '../../standards';
+import { Icon } from 'react-native-elements';
 
-export default function Categories({ data }) {
+export default function Categories({ data, onDelete, navigation }) {
+
+  const handleEdit = () => {
+    navigation.navigate('CategoryAdd', { editData: data });
+  };
+
+  const handleDelete = () => {
+    Alert.alert(
+      'Confirmação',
+      'Tem certeza que deseja excluir esta categoria?',
+      [
+        {
+          text: 'Excluir',
+          onPress: () => onDelete(data.id),
+          style: 'destructive',
+        },
+        {
+          text: 'Cancelar',
+          style: 'cancel',
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
   return (
     <TouchableOpacity style={styles.container}>
       <Text style={styles.date}>{data.date}</Text>
 
       <View style={styles.content}>
-        <View> 
+        <View>
           <Text style={styles.label}>{data.descricao}</Text>
         </View>
 
         <View style={styles.buttonArea}>
-          <TouchableOpacity style={styles.actionButton}>
+          <TouchableOpacity style={styles.actionButton} onPress={handleEdit}>
             <View>
-              <AntDesign name="edit" size={25} color={ThemeColors.fonteSecundaria} />
+              <Icon name="pencil-outline" type="ionicon" color={ThemeColors.fonteSecundaria} />
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.actionButton}>
+          <TouchableOpacity style={styles.actionButton} onPress={handleDelete}>
             <View>
-              <AntDesign name="delete" size={25} color={ThemeColors.fonteSecundaria} />
+              <Icon name="trash-outline" type="ionicon" color={ThemeColors.fonteSecundaria} />
             </View>
           </TouchableOpacity>
         </View>
@@ -34,17 +58,15 @@ export default function Categories({ data }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginBottom: 24,
   },
   content: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 2,
-    marginBottom: 8,
+    marginTop:5,
   },
   label: {
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 18,
     color: ThemeColors.fonte,
   },
   buttonArea: {
