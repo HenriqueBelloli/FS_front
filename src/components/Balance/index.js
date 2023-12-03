@@ -46,7 +46,12 @@ export default function Balance() {
         <View style={styles.item}>
           <View style={styles.content}>
             <Text style={styles.itemLabel}>Saldo em contas</Text>
-            <Text style={styles.balance}>R$ {saldo.toFixed(2)}</Text>
+            <Text style={styles.balance}>
+              {Number(saldo).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              })}
+            </Text>
           </View>
         </View>
       </View>
@@ -56,7 +61,12 @@ export default function Balance() {
           <Ionicons name="ios-arrow-up-circle-sharp" size={50} color={ThemeColors.verdeReceitas} />
           <View style={styles.content}>
             <Text style={styles.itemLabel}>Receitas</Text>
-            <Text style={styles.incomes}>R$ {receitas.toFixed(2)}</Text>
+            <Text style={styles.incomes}>
+              {Number(receitas).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              })}
+            </Text>
           </View>
         </View>
 
@@ -68,7 +78,12 @@ export default function Balance() {
           />
           <View style={styles.content}>
             <Text style={styles.itemLabel}> Despesas </Text>
-            <Text style={styles.expences}>R$ {despesas.toFixed(2)}</Text>
+            <Text style={styles.expences}>
+              {Number(despesas).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              })}
+            </Text>
           </View>
         </View>
       </View>
