@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, Text, View, FlatList, StatusBar } from 'react-native';
+import { useRoute } from '@react-navigation/native';
 import SwitchSelector from 'react-native-switch-selector';
 import Movements from '../../components/Movements';
 import ApiService from '../../services/apiService';
@@ -8,10 +9,13 @@ import Select from '../../components/MonthYearPicker';
 
 const statusBarHeight = StatusBar.currentHeight ? StatusBar.currentHeight + 22 : 64;
 
-export default function Transactions() {
-  const [selectedOption, setSelectedOption] = useState('receitas');
-  const [list, setList] = useState([]);
+export default function Transactions({ navigation }) {
+  const route = useRoute();
+  const paramTipo = route.params && route.params.tipo ? route.params.tipo : '1';
   const apiService = new ApiService();
+
+  const [selectedOption, setSelectedOption] = useState(paramTipo === '1' ? 'receitas' : 'despesas');
+  const [list, setList] = useState([]);
 
   const months = [
     'Janeiro',
@@ -27,38 +31,55 @@ export default function Transactions() {
     'Novembro',
     'Dezembro',
   ];
-  const [selectedMonth, setSelectedMonth] = useState(11);
+  const [selectedMonth, setSelectedMonth] = useState(12);
   const [selectedYear, setSelectedYear] = useState(2023);
 
   const handleSelectChange = (value) => {
     setSelectedMonth(value);
   };
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
 
-        let firstDay = new Date(selectedYear, selectedMonth - 1, 1);
-        let lastDay = new Date(selectedYear, selectedMonth, 0);
-        firstDay.setDate(firstDay.getDate() + 1); // Tive que compensar a data pois Op.between estav reduzindo um dia sempre
-        lastDay.setDate(lastDay.getDate() + 1);
+  const fetchData = useCallback(async () => {
+    try {
+      let firstDay = new Date(selectedYear, selectedMonth - 1, 1);
+      let lastDay = new Date(selectedYear, selectedMonth, 0);
+      firstDay.setDate(firstDay.getDate() + 1); // Tive que compensar a data pois Op.between estav reduzindo um dia sempre
+      lastDay.setDate(lastDay.getDate() + 1);
 
-        const response = await apiService.request('GET', 'movimentacoes/search', {
-          usuarioId: 1,
-          tipo: selectedOption === 'receitas' ? 1 : 2,
-          periodo_inicial: firstDay.toISOString(), // Convertendo para string no formato ISO
-          periodo_final: lastDay.toISOString(),
+      const response = await apiService.request('GET', 'movimentacoes/search', {
+        usuarioId: 1,
+        tipo: selectedOption === 'receitas' ? 1 : 2,
+        periodo_inicial: firstDay.toISOString(), // Convertendo para string no formato ISO
+        periodo_final: lastDay.toISOString(),
+      });
 
-        });
-
-        setList(response.data);
-      } catch (error) {
-        console.error('Erro ao carregar dados da API:', error);
-      }
-    };
-
-    fetchData();
+      setList(response.data);
+    } catch (error) {
+      console.error('Erro ao carregar dados da API:', error);
+    }
   }, [selectedOption, selectedMonth]);
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchData();
+    });
+
+    return unsubscribe;
+  }, [navigation, fetchData]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData, selectedOption, selectedMonth]);
+
+  const deletarMovimentacao = async (movementId) => {
+    try {
+      await apiService.request('DELETE', `movimentacoes?id=${movementId}`);
+
+      fetchData();
+    } catch (error) {
+      Alert.alert('Erro ao excluir a movimentação:\n' + error.message);
+    }
+  };
+  
   return (
     <View style={styles.container}>
       <View style={styles.containerHeader}>
@@ -80,7 +101,7 @@ export default function Transactions() {
           data={list}
           keyExtractor={(item) => String(item.id)}
           showsVerticalScrollIndicator={true}
-          renderItem={({ item }) => <Movements data={item} />}
+          renderItem={({ item }) => <Movements data={item} navigation={navigation} onDelete={deletarMovimentacao}/>}
         />
       </View>
     </View>

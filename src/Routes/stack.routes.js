@@ -1,8 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import UserLogin from '../pages/UserLogin';
 import UserRegister from '../pages/UserRegister';
-import IncomeAdd from '../pages/IncomeAdd';
-import ExpenseAdd from '../pages/ExpenseAdd';
+import MovementAdd from '../pages/MovementAdd';
 import AccountList from '../pages/AccountList';
 import AccountAdd from '../pages/AccountAdd';
 import CategoryList from '../pages/CategoryList';
@@ -17,8 +16,7 @@ export default function StackRoutes() {
       <Stack.Screen name="Login" component={UserLogin} options={{ headerShown: false }} />
       <Stack.Screen name="UserRegister" component={UserRegister} options={{ headerShown: false }} />
 
-      <Stack.Screen name="IncomeAdd" component={IncomeAdd} options={{ headerShown: false }} />
-      <Stack.Screen name="ExpenseAdd" component={ExpenseAdd} options={{ headerShown: false }} />
+      <Stack.Screen name="MovementAdd" component={MovementAdd} options={{ headerShown: false }} />
 
       <Stack.Screen name="AccountList" component={AccountList} options={{ headerShown: false }} />
       <Stack.Screen name="AccountAdd" component={AccountAdd} options={{ headerShown: false }} />

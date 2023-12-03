@@ -18,11 +18,11 @@ export default class TabButtonAdd extends React.Component {
  
   adicionarReceita = () =>{
     this.toggleMenu
-    this.props.navigation.navigate('IncomeAdd');
+    this.props.navigation.navigate('MovementAdd',{ tipo: '1' });
   }
   adicionarDespesa = () =>{
     this.toggleMenu
-    this.props.navigation.navigate('ExpenseAdd');
+    this.props.navigation.navigate('MovementAdd',{ tipo: '2' });
   }
   render() {
     const incomeStyle = {
@@ -119,6 +119,6 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 48 / 2,
-    backgroundColor: ThemeColors.cardBackground,
+    backgroundColor: '#e4e3e3',
   },
 });

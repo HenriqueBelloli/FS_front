@@ -1,20 +1,44 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
 import React from 'react';
-import { AntDesign } from '@expo/vector-icons';
 import { ThemeColors } from '../../standards';
+import { Icon } from 'react-native-elements';
+import { format } from 'date-fns';
 
-export default function Movements({ data }) {
+export default function Movements({ data, onDelete, navigation }) {
   const formatter = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
   });
 
+  const handleEdit = () => {
+    navigation.navigate('MovementAdd', { editData: data });
+   };
+
+  const handleDelete = () => {
+    Alert.alert(
+      'Confirmação',
+      'Tem certeza que deseja excluir esta movimentação?',
+      [
+        {
+          text: 'Excluir',
+          onPress: () => onDelete(data.id),
+          style: 'destructive',
+        },
+        {
+          text: 'Cancelar',
+          style: 'cancel',
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
   return (
     <TouchableOpacity style={styles.container}>
-      <Text style={styles.date}>{data.data}</Text>
+      <Text style={styles.date}> {format(new Date(data.data), 'dd/MM/yyyy')}</Text>
 
       <View style={styles.content}>
-        <View>
+        <View style={styles.containerTexto}>
           <Text style={styles.label}>{data.descricao}</Text>
           <Text style={styles.category}>
             {data.categoria.descricao} | {data.conta.descricao}
@@ -26,15 +50,15 @@ export default function Movements({ data }) {
         </Text>
 
         <View style={styles.buttonArea}>
-          <TouchableOpacity style={styles.actionButton}>
+          <TouchableOpacity style={styles.actionButton} onPress={handleEdit}>
             <View>
-              <AntDesign name="edit" size={25} color={ThemeColors.fonteSecundaria} />
+              <Icon name="pencil-outline" type="ionicon" color={ThemeColors.fonteSecundaria} />
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.actionButton}>
+          <TouchableOpacity style={styles.actionButton} onPress={handleDelete}>
             <View>
-              <AntDesign name="delete" size={25} color={ThemeColors.fonteSecundaria} />
+              <Icon name="trash-outline" type="ionicon" color={ThemeColors.fonteSecundaria} />
             </View>
           </TouchableOpacity>
         </View>
@@ -52,29 +76,33 @@ const styles = StyleSheet.create({
   content: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     marginTop: 2,
     marginBottom: 8,
   },
+  containerTexto:{
+    flex: 1
+   },
   date: {
     color: ThemeColors.fonte,
     fontWeight: 'bold',
   },
   label: {
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 18,
     color: ThemeColors.fonte,
   },
   category: {
-    fontSize: 12,
+    fontSize: 14,
     color: ThemeColors.fonteSecundaria,
   },
   incomes: {
-    fontSize: 16,
+    fontSize: 18,
     color: ThemeColors.verdeReceitas,
     fontWeight: 'bold',
   },
   expenses: {
-    fontSize: 16,
+    fontSize: 18,
     color: ThemeColors.vermelhoDespesas,
     fontWeight: 'bold',
   },

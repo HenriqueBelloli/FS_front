@@ -4,7 +4,7 @@ import { ThemeColors } from '../../standards';
 import { AntDesign } from '@expo/vector-icons';
 
 const Select = ({ options, selectedValue, onSelect }) => {
-  const [selectedIndex, setSelectedIndex] = useState(selectedValue);
+  const [selectedIndex, setSelectedIndex] = useState(selectedValue-1);
 
   const handleNext = () => {
     const newIndex = (selectedIndex + 1) % options.length;
