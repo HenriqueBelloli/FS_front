@@ -3,8 +3,13 @@ import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { ThemeColors } from '../../standards';
 
 const Button = (props) => {
+  const { primary, marginTop = 15 } = props;
+  const backgroundColor = primary
+  ? ThemeColors.buttonPrimaryColor
+  : ThemeColors.buttonSecondaryColor;
+
   return (
-    <TouchableOpacity style={styles.button} onPress={props.onPress}>
+    <TouchableOpacity style={[styles.button, { backgroundColor, marginTop}]} onPress={props.onPress}>
       <Text  style={styles.text}> {props.label} </Text>
     </TouchableOpacity>
   );
@@ -13,9 +18,7 @@ const Button = (props) => {
 const styles = StyleSheet.create({
   button: {
     height: 50,
-    backgroundColor: ThemeColors.buttonPrimaryColor,
     marginHorizontal: 20,
-    marginTop: 20,
     borderRadius: 8,
     fontSize: 18,
     justifyContent: 'center',

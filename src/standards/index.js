@@ -14,6 +14,7 @@ const ThemeColors = {
   screenBackground: CombinedDarkTheme.colors.background,
   cardBackground: CombinedDarkTheme.colors.border,
   buttonPrimaryColor: CombinedDarkTheme.colors.primary,
+  buttonSecondaryColor: '#8e8e91',
   textColor: CombinedDarkTheme.colors.text,
 
   verdeReceitas: '#01C853',
