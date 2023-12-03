@@ -8,7 +8,7 @@ export default function Home() {
     <View style={styles.container}>
       <Header name="User" />
 
-      <Balance saldo="1.000" gastos="800.00" />
+      <Balance />
     </View>
   );
 }
