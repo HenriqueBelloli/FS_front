@@ -1,31 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, FlatList, StatusBar } from 'react-native';
-import Account from '../../Account';
+import React, { useState, useEffect, useCallback } from 'react';
+import { StyleSheet, Text, View, FlatList, StatusBar, Alert } from 'react-native';
+import Account from '../../components/Account';
 import FloatingButton from '../../components/FloatingButton';
 import ApiService from '../../services/apiService';
 import { ThemeColors } from '../../standards';
 
 const statusBarHeight = StatusBar.currentHeight ? StatusBar.currentHeight + 22 : 64;
 
-export default function CategoryList({ navigation }) {
+export default function AccountList({ navigation }) {
   const [list, setList] = useState([]);
   const apiService = new ApiService();
 
+  const fetchData = useCallback(async () => {
+    try {
+      const response = await apiService.request('GET', 'contas/usuarioContas', {
+        usuarioId: 1,
+      });
+
+      setList(response.data);
+    } catch (error) {
+      console.error('Erro ao carregar dados da API:', error);
+    }
+  }, [apiService]);
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await apiService.request('GET', 'contas/usuarioContas', {
-          usuarioId: 1,
-        });
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchData();
+    });
 
-        setList(response.data);
-      } catch (error) {
-        console.error('Erro ao carregar dados da API:', error);
-      }
-    };
+    return unsubscribe;
+  }, [navigation, fetchData]);
 
-    fetchData();
-  }, []);
+  const deletarConta = async (accountId) => {
+    try {
+      await apiService.request('DELETE', `contas?id=${accountId}`);
+
+      fetchData();
+    } catch (error) {
+      Alert.alert('Erro ao excluir conta:\n' + error.message);
+    }
+  };
 
   function adicionarConta() {
     navigation.navigate('AccountAdd');
@@ -43,7 +57,7 @@ export default function CategoryList({ navigation }) {
           data={list}
           keyExtractor={(item) => String(item.id)}
           showsVerticalScrollIndicator={true}
-          renderItem={({ item }) => <Account data={item} />}
+          renderItem={({ item }) => <Account data={item} navigation={navigation} onDelete={deletarConta} />}
         />
       </View>
       <FloatingButton style={{ bottom: 70, right: 40 }} onPress={adicionarConta} />

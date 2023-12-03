@@ -1,51 +1,121 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, StyleSheet, StatusBar, Alert } from 'react-native';
+import { useRoute } from '@react-navigation/native';
+import ApiService from '../../services/apiService';
+import { ThemeColors } from '../../standards';
+import Button from '../../components/Button';
+import { Icon } from 'react-native-elements';
+
+const statusBarHeight = StatusBar.currentHeight ? StatusBar.currentHeight + 22 : 64;
 
 const AccountAdd = ({ navigation }) => {
-  const [bankName, setBankName] = useState('');
-  const [balance, setBalance] = useState('');
+  const route = useRoute();
+  const editData = route.params?.editData || null;
 
-  const handleAddAccount = () => {
-    console.log('Banco:', bankName);
-    console.log('Saldo:', balance);
+  const [descricao, setDescricao] = useState(editData?.descricao || '');
+  const [saldo, setSaldo] = useState(editData?.saldo.toString() || '');
+  const apiService = new ApiService();
 
-    navigation.goBack();
-  };
+  async function contaCadastrar() {
+    try {
+      if (descricao === '') {
+        Alert.alert('Informe a descrição');
+        return;
+      }
+
+      const saldoFloat = parseFloat(saldo);
+
+      if (isNaN(saldoFloat)) {
+        Alert.alert('O saldo deve ser um valor numérico');
+        return;
+      }
+
+      const dados = {
+        descricao: descricao,
+      };
+
+      //Dados que são enviados apenas durante o cadastro
+      if (!editData) {
+        (dados.usuarioId = 1), (dados.saldo = saldoFloat);
+      }
+
+      await apiService.request(
+        editData ? 'PUT' : 'POST',
+        `contas${editData ? `?id=${editData.id}` : ''}`,
+        dados
+      );
+
+      Alert.alert(
+        editData ? 'Conta alterada com sucesso!' : 'Conta criada com sucesso!',
+        '',
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              navigation.goBack();
+            },
+          },
+        ],
+        { cancelable: false }
+      );
+    } catch (error) {
+      Alert.alert('Erro ao gravar conta.\n' + error.message);
+    }
+  }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerText}>Cadastro de contas</Text>
-
-      <View style={styles.fieldContainer}>
-        <Text style={styles.label}>Nome do Banco</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Exemplo: Banco do Brasil"
-          placeholderTextColor="white"
-          value={bankName}
-          onChangeText={(text) => setBankName(text)}
-        />
+      <View style={styles.containerHeader}>
+        <Text style={styles.headerText}>{editData ? 'Editar Conta' : 'Cadastro de Contas'}</Text>
       </View>
 
-      <View style={styles.fieldContainer}>
-        <Text style={styles.label}>Saldo</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Exemplo: R$ 2000"
-          placeholderTextColor="white"
-          value={balance}
-          onChangeText={(text) => setBalance(text)}
-          keyboardType="numeric"
+      <View style={styles.containerContent}>
+        <View style={styles.containerInput}>
+          <Icon
+            name="create-outline"
+            type="ionicon"
+            color={ThemeColors.fonteSecundaria}
+            style={styles.icon}
+            size={25}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Descrição"
+            placeholderTextColor={ThemeColors.icone}
+            value={descricao}
+            onChangeText={(text) => setDescricao(text)}
+          />
+        </View>
+
+        {!editData && (
+          <View style={styles.containerInput}>
+            <Icon
+              name="dollar"
+              type="font-awesome"
+              color={ThemeColors.fonteSecundaria}
+              style={styles.icon}
+              size={25}
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Saldo atual"
+              placeholderTextColor={ThemeColors.icone}
+              value={saldo}
+              onChangeText={(text) => setSaldo(text)}
+              keyboardType="numeric"
+            />
+          </View>
+        )}
+
+        <Button
+          label={editData ? 'Salvar' : 'Cadastrar'}
+          onPress={contaCadastrar}
+          primary
+          marginTop={70}
         />
+        <Button label="Voltar" onPress={() => navigation.goBack()} />
       </View>
-
-      <TouchableOpacity style={styles.addButton} onPress={handleAddAccount}>
-        <Text style={styles.addButtonText}>Cadastrar</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Text style={styles.backButtonText}>Voltar</Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -53,56 +123,46 @@ const AccountAdd = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#1F1F1F',
+    backgroundColor: ThemeColors.screenBackground,
+  },
+  containerHeader: {
+    marginTop: statusBarHeight,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  containerContent: {
+    flex: 1,
+    backgroundColor: ThemeColors.cardBackground,
+    borderTopStartRadius: 25,
+    borderTopEndRadius: 25,
+  },
+  containerInput: {
+    flexDirection: 'row',
+    marginTop: 20,
+    backgroundColor: 'transparent',
+    borderBottomWidth: 1,
+    borderBottomColor: ThemeColors.borda,
+    marginStart: 14,
+    marginEnd: 14,
   },
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
     marginVertical: 16,
-    color: 'white',
-  },
-  fieldContainer: {
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 8,
-    color: 'white',
+    color: ThemeColors.textColor,
   },
   input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    paddingHorizontal: 8,
-    color: 'white',
+    height: 50,
+    flex: 1,
+    paddingLeft: 10,
+    fontSize: 18,
+    color: ThemeColors.textColor,
   },
-  addButton: {
-    backgroundColor: '#007BFF',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 16,
-  },
-  addButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  backButton: {
-    backgroundColor: '#ccc',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  backButtonText: {
-    color: '#000',
-    fontSize: 16,
-    fontWeight: 'bold',
+  icon: {
+    marginRight: 10,
+    top: 10,
   },
 });
 
