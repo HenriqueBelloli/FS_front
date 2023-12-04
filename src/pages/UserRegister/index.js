@@ -6,12 +6,16 @@ import {
   TouchableWithoutFeedback,
   StyleSheet,
   SafeAreaView,
+  Alert,
 } from 'react-native';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import { ThemeColors } from '../../standards';
+import ApiService from '../../services/apiService';
 
 const UserRegister = ({ navigation }) => {
+  const apiService = new ApiService();
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
@@ -27,34 +31,48 @@ const UserRegister = ({ navigation }) => {
   useEffect(() => passInput.current.resetError, [pass]);
   useEffect(() => confirmPassInput.current.resetError, [confirmPass]);
 
-  function cadastrar() {
-    if (name == '') {
-      alert('Nome inválido');
-      nameInput.current.focusOnError();
-      return;
-    }
+  async function cadastrar() {
+    try {
+      if (name == '') {
+        Alert.alert('Nome inválido');
+        nameInput.current.focusOnError();
+        return;
+      }
 
-    if (email === '') {
-      alert('e-mail inválido');
-      emailInput.current.focusOnError();
-      return;
+      if (email === '') {
+        Alert.alert('e-mail inválido');
+        emailInput.current.focusOnError();
+        return;
+      }
+      if (pass === '') {
+        Alert.alert('Senha inválida');
+        passInput.current.focusOnError();
+        return;
+      }
+      if (confirmPass === '') {
+        Alert.alert('Confirme a senha');
+        confirmPassInput.current.focusOnError();
+        return;
+      }
+      if (pass !== confirmPass) {
+        Alert.alert('Senhas informadas não conferem');
+        confirmPassInput.current.focusOnError();
+        return;
+      }
+
+      dados = {
+        nome: name,
+        email,
+        senha: pass,
+      };
+
+      const result = await apiService.request('POST', 'usuarios', dados);
+      global.usuarioId = result.data.id;
+
+      navigation.navigate('AppMain');
+    } catch (error) {
+      Alert.alert('Erro ao cadastrar:\n' + error.message);
     }
-    if (pass === '') {
-      alert('Senha inválida');
-      passInput.current.focusOnError();
-      return;
-    }
-    if (confirmPass === '') {
-      alert('Confirme a senha');
-      confirmPassInput.current.focusOnError();
-      return;
-    }
-    if (pass !== confirmPass) {
-      alert('Senhas informadas não conferem');
-      confirmPassInput.current.focusOnError();
-      return;
-    }
-    navigation.navigate('App');
   }
 
   return (
@@ -107,7 +125,8 @@ const UserRegister = ({ navigation }) => {
           keyboardType="default"
           secureTextEntry
         />
-        <Button label="Cadastrar" onPress={cadastrar} />
+        <Button label="Cadastrar" onPress={cadastrar} marginTop={70} primary />
+        <Button label="Voltar" onPress={() => navigation.goBack()} />
       </View>
     </SafeAreaView>
   );
@@ -123,7 +142,7 @@ const styles = StyleSheet.create({
   containerTitle: {
     flex: 1,
     alignItems: 'center',
-    justifyContent:'center',
+    justifyContent: 'center',
     width: '95%',
     paddingBottom: 50,
   },
@@ -136,7 +155,7 @@ const styles = StyleSheet.create({
   subTitle: {
     marginTop: 20,
     textAlign: 'center',
-    fontSize: 12,
+    fontSize: 14,
     color: ThemeColors.textColor,
   },
   container: {

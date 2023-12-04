@@ -7,12 +7,15 @@ import {
   TouchableWithoutFeedback,
   StyleSheet,
   SafeAreaView,
+  Alert,
 } from 'react-native';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import { ThemeColors } from '../../standards';
+import ApiService from '../../services/apiService';
 
 const UserLogin = ({ navigation }) => {
+  const apiService = new ApiService();
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
 
@@ -22,18 +25,30 @@ const UserLogin = ({ navigation }) => {
   useEffect(() => emailInput.current.resetError, [email]);
   useEffect(() => passInput.current.resetError, [pass]);
 
-  function logar() {
-    if (email === '') {
-      alert('e-mail inválido');
-      emailInput.current.focusOnError();
-      return;
+  async function logar() {
+    try {
+      if (email === '') {
+        Alert.alert('e-mail inválido');
+        emailInput.current.focusOnError();
+        return;
+      }
+      if (pass === '') {
+        Alert.alert('Senha inválida');
+        passInput.current.focusOnError();
+        return;
+      }
+
+      dados = {
+        email,
+        senha: pass,
+      };
+
+      const result = await apiService.request('POST', 'usuarios/login', dados);
+      global.usuarioId = result.data.id;
+      navigation.navigate('AppMain');
+    } catch (error) {
+      Alert.alert('Erro ao logar:\n' + error.message);
     }
-    if (pass === '') {
-      alert('Senha inválida');
-      passInput.current.focusOnError();
-      return;
-    }
-    navigation.navigate('AppMain');
   }
 
   function cadastrar() {
@@ -67,7 +82,7 @@ const UserLogin = ({ navigation }) => {
           keyboardType="default"
           secureTextEntry
         />
-        <Button label="Entrar" onPress={logar} />
+        <Button label="Entrar" onPress={logar} primary />
         <View style={styles.register}>
           <TouchableWithoutFeedback>
             <Text style={styles.registerText}>Ainda não possui conta?</Text>
