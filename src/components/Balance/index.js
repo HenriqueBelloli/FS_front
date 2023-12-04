@@ -1,42 +1,57 @@
-import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { ThemeColors } from '../../standards';
 import ApiService from '../../services/apiService';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
 import pt from 'date-fns/locale/pt-BR'; // Importe o localizador para português do Brasil
 
-export default function Balance() {
+export default function Balance({ navigation }) {
   const apiService = new ApiService();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [saldo, setSaldo] = useState(0);
   const [receitas, setReceitas] = useState(0);
   const [despesas, setDespesas] = useState(0);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        let firstDay = startOfMonth(currentDate);
-        let lastDay = endOfMonth(currentDate);
-        firstDay.setDate(firstDay.getDate() + 1); // Tive que compensar a data pois Op.between estav reduzindo um dia sempre
-        lastDay.setDate(lastDay.getDate() + 1);
+  const fetchData = useCallback(async () => {
+    try {
+      let firstDay = startOfMonth(currentDate);
+      let lastDay = endOfMonth(currentDate);
+      firstDay.setDate(firstDay.getDate() + 1); // Tive que compensar a data pois Op.between estav reduzindo um dia sempre
+      lastDay.setDate(lastDay.getDate() + 1);
 
-        const response = await apiService.request('GET', 'usuarios/balance', {
-          usuarioId: 1,
-          periodo_inicial: firstDay.toISOString(),
-          periodo_final: lastDay.toISOString(),
-        });
+      const response = await apiService.request('GET', 'usuarios/balance', {
+        usuarioId: global.usuarioId,
+        periodo_inicial: firstDay.toISOString(),
+        periodo_final: lastDay.toISOString(),
+      });
 
-        setSaldo(response.data.totalSaldo || 0);
-        setReceitas(response.data.totalReceitas || 0);
-        setDespesas(response.data.totalDespesas || 0);
-      } catch (error) {
-        console.error('Erro ao carregar dados da API:', error);
-      }
-    };
-
-    fetchData();
+      setSaldo(response.data.totalSaldo || 0);
+      setReceitas(response.data.totalReceitas || 0);
+      setDespesas(response.data.totalDespesas || 0);
+    } catch (error) {
+      console.error('Erro ao carregar dados da API:', error);
+    }
   }, []);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchData();
+    });
+
+    return unsubscribe;
+  }, [navigation, fetchData]);
+
+  function listarReceitas() {
+    navigation.navigate('Transactions',{ tipo: '1' })
+  }
+
+  function listarDespesas() {
+    navigation.navigate('Transactions',{ tipo: '2' })
+  }
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   return (
     <View style={styles.container}>
@@ -57,7 +72,7 @@ export default function Balance() {
       </View>
 
       <View style={styles.containerBalanco}>
-        <View style={styles.item}>
+        <TouchableOpacity style={styles.item} onPress={listarReceitas}>
           <Ionicons name="ios-arrow-up-circle-sharp" size={50} color={ThemeColors.verdeReceitas} />
           <View style={styles.content}>
             <Text style={styles.itemLabel}>Receitas</Text>
@@ -68,9 +83,9 @@ export default function Balance() {
               })}
             </Text>
           </View>
-        </View>
+        </TouchableOpacity>
 
-        <View style={styles.item}>
+        <TouchableOpacity style={styles.item} onPress={listarDespesas}>
           <Ionicons
             name="ios-arrow-down-circle-sharp"
             size={50}
@@ -85,7 +100,7 @@ export default function Balance() {
               })}
             </Text>
           </View>
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );
