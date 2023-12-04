@@ -120,7 +120,7 @@ const MovementAdd = ({ navigation }) => {
         return;
       }
 
-      if (!Array.isArray(listaCategorias) || ! listaContas.listaCategorias > 0) {
+      if (!Array.isArray(listaCategorias) || ! listaCategorias.length > 0) {
         Alert.alert('Não existem categorias cadastradas');
         return;
       }

@@ -5,7 +5,7 @@ import TabButtonAdd from '../components/TabButtonAdd';
 import TabButtonSettings from '../components/TabButtonSettings';
 import Home from '../pages/Home';
 import Transactions from '../pages/Transactions';
-import News from '../pages/News';
+import News from '../pages/Reports';
 
 const Tab = createBottomTabNavigator();
 const AcaoEspecialComponent = () => null;
@@ -64,14 +64,14 @@ export default function TabRoutes({ navigation }) {
         }}
       />
       <Tab.Screen
-        name="News"
+        name="Reports"
         component={News}
         options={{
           headerShown: false,
-          title: 'Noticias',
+          title: 'Gráficos',
           tabBarIcon: ({ focused, color, size }) => (
             <Ionicons
-              name={focused ? 'ios-newspaper' : 'ios-newspaper-outline'}
+              name={focused ? 'bar-chart' : 'bar-chart-outline'}
               size={size}
               color={color}
             />
