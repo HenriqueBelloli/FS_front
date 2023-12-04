@@ -16,7 +16,7 @@ export default function CategoryList({ navigation }) {
   const fetchData = useCallback(async () => {
     try {
       const response = await apiService.request('GET', 'categorias/usuarioCategorias', {
-        usuarioId: 1,
+        usuarioId: global.usuarioId,
         tipo: selectedOption === 'receitas' ? 1 : 2,
       });
 

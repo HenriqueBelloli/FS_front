@@ -14,7 +14,7 @@ export default function AccountList({ navigation }) {
   const fetchData = useCallback(async () => {
     try {
       const response = await apiService.request('GET', 'contas/usuarioContas', {
-        usuarioId: 1,
+        usuarioId: global.usuarioId,
       });
 
       setList(response.data);

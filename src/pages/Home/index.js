@@ -3,12 +3,12 @@ import Header from '../../components/Header';
 import Balance from '../../components/Balance';
 import { ThemeColors } from '../../standards';
 
-export default function Home() {
+export default function Home({navigation}) {
   return (
     <View style={styles.container}>
       <Header name="User" />
 
-      <Balance />
+      <Balance navigation = {navigation}/>
     </View>
   );
 }

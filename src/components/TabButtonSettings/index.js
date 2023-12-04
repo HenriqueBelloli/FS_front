@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     backgroundColor: ThemeColors.cardBackground,
   },
   buttonText: {
-    color: 'white',
+    color: 'black',
   },
   menu: {
     position: 'absolute',
@@ -115,6 +115,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   secondary: {
-    backgroundColor: ThemeColors.cardBackground,
+    backgroundColor: '#e4e3e3'
   },
 });

@@ -13,7 +13,6 @@ import { useRef } from 'react';
 const statusBarHeight = StatusBar.currentHeight ? StatusBar.currentHeight + 22 : 64;
 
 const MovementAdd = ({ navigation }) => {
-
   const formatDate = (rawDate, invertido) => {
     let date = new Date(rawDate);
     let day = date.getDate();
@@ -24,7 +23,7 @@ const MovementAdd = ({ navigation }) => {
 
     return invertido ? `${year}/${month}/${day}` : `${day}/${month}/${year}`;
   };
-  
+
   const apiService = new ApiService();
   const route = useRoute();
   const editData = route.params?.editData || null;
@@ -34,10 +33,20 @@ const MovementAdd = ({ navigation }) => {
       : editData && editData.tipo
       ? editData.tipo
       : '1';
-  const [valor, setValor] = useState(editData?.valor || '');
+  const formatter = new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+  });
+  const [valor, setValor] = useState(
+    editData && editData.valor ? formatter.format(editData.valor) : ''
+  );
   let valorRef = useRef(null);
-  const [data, setData] = useState(new Date(editData?.data || ''));
-  const [dataDisplay, setDataDisplay] = useState( (editData && editData.data ? formatDate(editData.data): ''));
+  const [data, setData] = useState(
+    editData && editData.data ? new Date(editData.data) : new Date()
+  );
+  const [dataDisplay, setDataDisplay] = useState(
+    editData && editData.data ? formatDate(editData.data) : ''
+  );
   const [showPicker, setshowPicker] = useState(false);
   const [descricao, setDescricao] = useState(editData?.descricao || '');
   const [conta, setConta] = useState(editData?.conta.id || '');
@@ -50,7 +59,7 @@ const MovementAdd = ({ navigation }) => {
     const fetchData = async () => {
       try {
         const contas = await apiService.request('GET', 'contas/usuarioContas', {
-          usuarioId: 1,
+          usuarioId: global.usuarioId,
         });
 
         setListaContas(contas.data);
@@ -59,13 +68,13 @@ const MovementAdd = ({ navigation }) => {
           // Mover o item correspondente para a frente da lista
           const updatedContas = [
             editData.conta,
-            ...contas.data.filter(item => item.id !== editData.conta.id)
+            ...contas.data.filter((item) => item.id !== editData.conta.id),
           ];
           setListaContas(updatedContas);
         }
 
         const categorias = await apiService.request('GET', 'categorias/usuarioCategorias', {
-          usuarioId: 1,
+          usuarioId: global.usuarioId,
           tipo: paramTipo === '1' ? 1 : 2,
         });
 
@@ -75,11 +84,10 @@ const MovementAdd = ({ navigation }) => {
           // Mover o item correspondente para a frente da lista
           const updatedCategorias = [
             editData.categoria,
-            ...categorias.data.filter(item => item.id !== editData.categoria.id)
+            ...categorias.data.filter((item) => item.id !== editData.categoria.id),
           ];
           setListaCategorias(updatedCategorias);
         }
-
       } catch (error) {
         console.error('Erro ao carregar dados da API:', error);
       }
@@ -107,12 +115,12 @@ const MovementAdd = ({ navigation }) => {
         return;
       }
 
-      if (!Array.isArray(listaContas)) {
+      if (!Array.isArray(listaContas) || ! listaContas.length > 0) {
         Alert.alert('Não existem contas bancárias cadastradas');
         return;
       }
 
-      if (!Array.isArray(listaCategorias)) {
+      if (!Array.isArray(listaCategorias) || ! listaContas.listaCategorias > 0) {
         Alert.alert('Não existem categorias cadastradas');
         return;
       }

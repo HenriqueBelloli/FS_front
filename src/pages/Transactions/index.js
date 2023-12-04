@@ -15,6 +15,7 @@ export default function Transactions({ navigation }) {
   const apiService = new ApiService();
 
   const [selectedOption, setSelectedOption] = useState(paramTipo === '1' ? 'receitas' : 'despesas');
+  const inicialOption = paramTipo === '1' ? 0 : 1
   const [list, setList] = useState([]);
 
   const months = [
@@ -46,7 +47,7 @@ export default function Transactions({ navigation }) {
       lastDay.setDate(lastDay.getDate() + 1);
 
       const response = await apiService.request('GET', 'movimentacoes/search', {
-        usuarioId: 1,
+        usuarioId: global.usuarioId,
         tipo: selectedOption === 'receitas' ? 1 : 2,
         periodo_inicial: firstDay.toISOString(), // Convertendo para string no formato ISO
         periodo_final: lastDay.toISOString(),
@@ -56,7 +57,7 @@ export default function Transactions({ navigation }) {
     } catch (error) {
       console.error('Erro ao carregar dados da API:', error);
     }
-  }, [selectedOption, selectedMonth]);
+  }, [selectedOption, selectedMonth, inicialOption]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -68,7 +69,7 @@ export default function Transactions({ navigation }) {
 
   useEffect(() => {
     fetchData();
-  }, [fetchData, selectedOption, selectedMonth]);
+  }, [fetchData, selectedOption, selectedMonth, inicialOption]);
 
   const deletarMovimentacao = async (movementId) => {
     try {
@@ -88,7 +89,7 @@ export default function Transactions({ navigation }) {
             { label: 'Receitas', value: 'receitas', activeColor: ThemeColors.verdeReceitas },
             { label: 'Despesas', value: 'despesas', activeColor: ThemeColors.vermelhoDespesas },
           ]}
-          initial={0}
+          initial={inicialOption}
           onPress={(value) => setSelectedOption(value)}
           style={styles.switchSelector}
         />
